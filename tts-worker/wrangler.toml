@@ -1,0 +1,7 @@
+name = "tts-proxy"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+account_id = "36e1e40984fd285b39fa0d1da72f18b3"
+
+[vars]
+VOICE_ID = "XGllnCP2Rp94BDE4DdPV"
