@@ -75,7 +75,7 @@ html.fx .fx-word{opacity:0;filter:blur(12px);transform:translate3d(0,.35em,0) ro
 .fx-spot > *:not([class*="absolute"]){position:relative;z-index:1;}
 
 /* Rotating border beam on project cards */
-.fx-beam::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;padding:1px;
+.fx-beam::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;padding:1px;
   background:conic-gradient(from var(--fx-angle),transparent 0 70%,rgba(52,211,153,.0) 72%,#34d399 84%,#a7f3d0 88%,transparent 92%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
   opacity:0;transition:opacity .4s ease;animation:fx-spin 3.2s linear infinite;animation-play-state:paused;}
@@ -84,8 +84,17 @@ html.fx .fx-word{opacity:0;filter:blur(12px);transform:translate3d(0,.35em,0) ro
 
 /* Gentle 3D tilt on project cards */
 .fx-tilt{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0);
-  transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .3s ease,background-color .3s ease;}
-.fx-tilt:hover{transition:transform .12s linear,border-color .3s ease,background-color .3s ease;}
+  transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .3s ease,background-color .3s ease,filter .5s ease;}
+.fx-tilt:hover{transition:transform .12s linear,border-color .3s ease,background-color .3s ease,filter .5s ease;}
+
+/* Image tiles: same treatment as My Projects (glow over the image, emerald edge, gentle zoom) */
+.fx-media{isolation:isolate;}
+.fx-media::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .35s ease;
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(52,211,153,.16),transparent 60%);mix-blend-mode:screen;}
+.fx-media:hover::before{opacity:1;}
+.fx-media:hover{border-color:rgba(52,211,153,.4)!important;}
+.fx-media img{transition:transform .7s cubic-bezier(.22,1,.36,1),filter .5s ease,opacity .5s ease!important;}
+.fx-media:hover img{transform:scale(1.03)!important;}
 
 /* Primary buttons: light sweep + magnetic offset */
 .fx-btn{position:relative;overflow:hidden;transform:translate3d(var(--bx,0),var(--by,0),0);transition:transform .35s cubic-bezier(.22,1,.36,1),background-color .2s ease;}
@@ -1859,6 +1868,22 @@ html.fx .fx-word{opacity:0;filter:blur(12px);transform:translate3d(0,.35em,0) ro
     el.classList.add('fx-beam', 'fx-tilt');
     el.addEventListener('pointermove', function (e) {
       var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      el.style.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
+      el.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
+    });
+    el.addEventListener('pointerleave', function () { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); });
+  });
+
+  /* Every other image tile gets the same hover as the project cards */
+  var media = $('#gallery-scroller .aspect-\\[16\\/10\\], #work .grid > .group, #portfolio .grid > .group, section .grid > div.group.overflow-hidden, .aspect-square.grayscale')
+    .filter(function (el) { return !el.closest('#projects') && el.querySelector('img'); });
+  media.forEach(function (el) {
+    el.classList.add('fx-media', 'fx-beam', 'fx-tilt');
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.addEventListener('pointermove', function (e) {
+      var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (e.clientY - r.top) + 'px');
       el.style.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
       el.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
     });
