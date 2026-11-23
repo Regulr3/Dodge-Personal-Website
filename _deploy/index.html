@@ -283,6 +283,19 @@ html.fx .fx-char{opacity:0;filter:blur(10px);transform:translate3d(0,.45em,0);
 @media (prefers-reduced-motion:reduce){.hw-scan,#hero-hw img{animation:none!important}.hw-stage .shot{transition:opacity .3s}}
 .step-shot{width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid rgba(52,211,153,.18);border-radius:3px;margin-bottom:1.25rem;box-shadow:0 20px 50px -30px rgba(52,211,153,.45)}
 @media (max-width:767px){.story-step{min-height:auto!important;padding:2.5rem 0}.story-step .step-card{opacity:1!important;transform:none!important}}
+
+/* xAI facilities slideshow */
+.xai-slide{position:absolute;inset:0;margin:0;opacity:0;transition:opacity 1.1s ease}
+.xai-slide.is-on{opacity:1}
+.xai-slide img{transform:scale(1.06);transition:transform 6s ease-out}
+.xai-slide.is-on img{transform:scale(1)}
+.xai-name{position:absolute;left:1.5rem;top:1.4rem;z-index:2;display:flex;flex-direction:column;gap:.2rem;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.65)}
+.xai-name-t{font-size:clamp(1.4rem,2.6vw,2.2rem);font-weight:600;letter-spacing:-.02em;line-height:1}
+.xai-name-s{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.xai-dots{position:absolute;left:1.5rem;top:5.2rem;z-index:2;display:flex;gap:6px}
+.xai-dots i{width:18px;height:2px;background:rgba(255,255,255,.35);transition:background .4s,width .4s}
+.xai-dots i.is-on{background:#fff;width:30px}
+@media (prefers-reduced-motion:reduce){.xai-slide,.xai-slide img{transition:none}}
 </style>
 <link rel="stylesheet" href="/styles.css?v=20261123b">
 </head>
@@ -853,7 +866,7 @@ html.fx .fx-char{opacity:0;filter:blur(10px);transform:translate3d(0,.45em,0);
         <div class="bento">
           <a href="https://x.ai/" target="_blank" rel="noopener noreferrer" class="bento-tile group relative block overflow-hidden rounded-sm border border-white/10 bg-neutral-900/60 w2 h2" data-cat="infra">
             <span class="tile-go absolute top-4 right-4 z-10 w-8 h-8 grid place-items-center rounded-full border border-white/20 bg-black/50 text-neutral-200" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></span>
-            <img src="/xai-colossus.jpg" alt="xAI 'Colossus' supercluster" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
+            <div class="xai-slides absolute inset-0" data-slides><figure class="xai-slide is-on"><img src="/xai/colossus-1.jpg" alt="xAI Colossus 1 data center, Memphis, Tennessee" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async"><figcaption class="xai-name"><span class="xai-name-t font-geist">Colossus 1</span><span class="xai-name-s font-geist">Memphis, Tennessee</span></figcaption></figure><figure class="xai-slide"><img src="/xai/colossus-2.jpg" alt="xAI Colossus 2 data center, Memphis, Tennessee" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async"><figcaption class="xai-name"><span class="xai-name-t font-geist">Colossus 2</span><span class="xai-name-s font-geist">Memphis, Tennessee</span></figcaption></figure><figure class="xai-slide"><img src="/xai/macrohardrr.jpg" alt="xAI MACROHARDRR data center, Southaven, Mississippi" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async"><figcaption class="xai-name"><span class="xai-name-t font-geist">MACROHARDRR</span><span class="xai-name-s font-geist">Southaven, Mississippi</span></figcaption></figure><div class="xai-dots" aria-hidden="true"><i class="is-on"></i><i class=""></i><i class=""></i></div></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
             <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
               <span class="inline-block text-[10px] uppercase tracking-widest text-emerald-400 font-geist mb-1.5">Enterprise &#183; AI &amp; HPC</span>
@@ -1721,6 +1734,19 @@ html.fx .fx-char{opacity:0;filter:blur(10px);transform:translate3d(0,.45em,0);
       b.style.setProperty('--by', ((e.clientY - r.top - r.height / 2) * .25).toFixed(1) + 'px');
     });
     b.addEventListener('pointerleave', function () { b.style.setProperty('--bx', '0px'); b.style.setProperty('--by', '0px'); });
+  });
+
+  // xAI facilities slideshow
+  document.querySelectorAll('[data-slides]').forEach(function (box) {
+    var slides = box.querySelectorAll('.xai-slide'), dots = box.querySelectorAll('.xai-dots i'), i = 0, vis = false;
+    if (slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(box);
+    setInterval(function () {
+      if (!vis || document.hidden) return;
+      slides[i].classList.remove('is-on'); dots[i] && dots[i].classList.remove('is-on');
+      i = (i + 1) % slides.length;
+      slides[i].classList.add('is-on'); dots[i] && dots[i].classList.add('is-on');
+    }, 4500);
   });
 })();
 </script>
