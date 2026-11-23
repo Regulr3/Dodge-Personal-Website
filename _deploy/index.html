@@ -17,6 +17,7 @@
 <link rel="canonical" href="https://www.stephendodge.xyz">
 <script src="https://unpkg.com/lucide@latest" defer></script>
 <link rel="dns-prefetch" href="https://d27gacxqgnnask.cloudfront.net">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -300,8 +301,15 @@ html.fx .fx-char{opacity:0;filter:blur(10px);transform:translate3d(0,.45em,0);
 <link rel="stylesheet" href="/styles.css?v=20261123b">
 </head>
   <body class="antialiased">
+    <!-- Background (component) added by Aura -->
+    <div class="aura-background-component fixed top-0 left-0 w-full h-full -z-10" data-alpha-mask="80" style="min-height: 100vh; width: 100%; height: 100vh;">
+      <div data-us-project="1bY8o6HVTI1oxJxuCJEG" class="absolute w-full h-full left-0 top-0" style="width: 100%; height: 100vh;"></div>
+      <script type="text/javascript">
+        !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
+      </script>
+    </div>
     <!-- Main Grid Wrapper -->
-    <div class="max-w-[1400px] mx-auto w-full border-x relative bg-[#08090A]/30 min-h-screen flex flex-col border-white/10">
+    <div class="max-w-[1442px] mx-auto w-full border-x relative bg-[#08090A]/30 min-h-screen flex flex-col border-white/10">
       <!-- Header / Navigation -->
       <header class="sticky top-0 z-50 border-b glass-panel border-white/10 relative">
         <div class="grid grid-cols-1 md:grid-cols-12 h-16 divide-y md:divide-y-0 md:divide-x divide-white/10">
@@ -1748,6 +1756,22 @@ html.fx .fx-char{opacity:0;filter:blur(10px);transform:translate3d(0,.45em,0);
       slides[i].classList.add('is-on'); dots[i] && dots[i].classList.add('is-on');
     }, 4500);
   });
+
+  // Snap the page grid to the layout: one cell = 1/24 of the header grid (two per column),
+  // vertical lines on the column dividers, a horizontal line on the header's bottom border.
+  (function () {
+    var hdr = document.querySelector('header'), grid = hdr && hdr.querySelector('.grid');
+    if (!grid) return;
+    function snap() {
+      var r = grid.getBoundingClientRect(), wide = window.innerWidth >= 768;
+      var cell = r.width / (wide ? 24 : 6), x = r.left, y = (hdr.getBoundingClientRect().height - 1) % cell;
+      var b = document.body.style;
+      b.backgroundSize = cell + 'px ' + cell + 'px, ' + cell + 'px ' + cell + 'px, 100% 100%';
+      b.backgroundPosition = x + 'px ' + y + 'px, ' + x + 'px ' + y + 'px, 0 0';
+    }
+    snap(); window.addEventListener('resize', snap, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(snap);
+  })();
 })();
 </script>
 </body></html>
